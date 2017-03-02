@@ -21,11 +21,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-import apu_package::*;
+import apu_cluster_package::*;
 
 module fp_iter_divsqrt_wrapper
 #(
-  parameter TAG_WIDTH = WAPUTAG,
+  parameter TAG_WIDTH = 0,
   parameter RND_WIDTH = NDSFLAGS_DIVSQRT,
   parameter STAT_WIDTH = NUSFLAGS_DIVSQRT
 )

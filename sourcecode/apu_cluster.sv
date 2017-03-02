@@ -22,17 +22,18 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-import apu_package::*;
+import apu_cluster_package::*;
 
 module apu_cluster
   #(
-    parameter C_SQRT_PIPE_REGS   = 5,
-    parameter C_ADDSUB_PIPE_REGS = 1,
-    parameter C_MULT_PIPE_REGS   = 1,
-    parameter C_MAC_PIPE_REGS    = 2,
-    parameter C_CAST_PIPE_REGS   = 1,
-    parameter C_DIV_PIPE_REGS    = 3,
-    parameter C_DSP_PIPE_REGS    = 1
+    parameter C_NB_CORES         = 4,
+    parameter NDSFLAGS_CPU       = 0,
+    parameter NUSFLAGS_CPU       = 0,
+    parameter SHARED_FP          = 0,
+    parameter SHARED_DSP_MULT    = 0,
+    parameter SHARED_INT_MULT    = 0,
+    parameter SHARED_INT_DIV     = 0,
+    parameter SHARED_FP_DIVSQRT  = 0
     )
    (
     // Clock and Reset
@@ -42,6 +43,37 @@ module apu_cluster
     cpu_marx_if.marx              cpus [C_NB_CORES-1:0]
    
     );
+
+   localparam WAPUTAG = $clog2(C_NB_CORES);
+   localparam WCPUTAG = 0;
+   
+   localparam integer NAPUS_DSP_MULT = (C_NB_CORES==2)      ? 1 : C_NB_CORES/2;
+   localparam integer NAPUS_INT_MULT = (C_NB_CORES==2)      ? 1 : C_NB_CORES/2;
+   localparam integer NAPUS_INT_DIV  = (C_NB_CORES==2)      ? 1 : C_NB_CORES/4;
+   localparam integer NAPUS_ADDSUB   = (PRIVATE_FP_ADDSUB)  ? C_NB_CORES : (C_NB_CORES==2) ? 1 : C_NB_CORES/4;
+   localparam integer NAPUS_MULT     = (PRIVATE_FP_MULT)    ? C_NB_CORES : (C_NB_CORES==2) ? 1 : C_NB_CORES/4;
+   localparam integer NAPUS_CAST     = (PRIVATE_FP_CAST)    ? C_NB_CORES : (C_NB_CORES==2) ? 1 : C_NB_CORES/4;
+   localparam integer NAPUS_MAC      = (PRIVATE_FP_MAC)     ? C_NB_CORES : (C_NB_CORES==2) ? 1 : C_NB_CORES/4;
+   localparam integer NAPUS_DIV      = (PRIVATE_FP_DIV)     ? C_NB_CORES : 1;
+   localparam integer NAPUS_SQRT     = (PRIVATE_FP_SQRT)    ? C_NB_CORES : 1;
+   localparam integer NAPUS_DIVSQRT  = (PRIVATE_FP_DIVSQRT) ? C_NB_CORES : 1;
+
+
+   localparam APUTYPE_DSP_MULT   = (SHARED_DSP_MULT) ? 0 : 0;
+   localparam APUTYPE_INT_MULT   = (SHARED_INT_MULT) ? SHARED_DSP_MULT : 0;
+   localparam APUTYPE_INT_DIV    = (SHARED_INT_DIV) ? SHARED_DSP_MULT + SHARED_INT_MULT : 0;
+
+   localparam APUTYPE_FP         = (SHARED_FP) ? SHARED_DSP_MULT + SHARED_INT_MULT + SHARED_INT_DIV : 0;
+
+   localparam APUTYPE_ADDSUB     = (SHARED_FP) ? APUTYPE_FP   : 0;
+   localparam APUTYPE_MULT       = (SHARED_FP) ? APUTYPE_FP+1  : 0;
+   localparam APUTYPE_CAST       = (SHARED_FP) ? APUTYPE_FP+2  : 0;
+   localparam APUTYPE_MAC        = (SHARED_FP) ? APUTYPE_FP+3  : 0;
+   localparam APUTYPE_DIV        = (SHARED_FP_DIVSQRT==1) ? APUTYPE_FP+4 : 0;
+   localparam APUTYPE_SQRT       = (SHARED_FP_DIVSQRT==1) ? APUTYPE_FP+5 : 0;
+   localparam APUTYPE_DIVSQRT    = (SHARED_FP_DIVSQRT==2) ? APUTYPE_FP+4 : 0;
+
+   localparam C_APUTYPES   = (SHARED_FP) ? (SHARED_FP_DIVSQRT==1) ? APUTYPE_FP+6 : (SHARED_FP_DIVSQRT==2) ? APUTYPE_FP+5 : APUTYPE_FP+4 : SHARED_DSP_MULT + SHARED_INT_DIV + SHARED_INT_MULT;
 
    cpu_marx_if marx_ifs [C_APUTYPES-1:0][C_NB_CORES-1:0] ();
    
@@ -155,7 +187,8 @@ module apu_cluster
        .WOP(WOP_DSP_MULT),
        .NARGS(3),
        .NUSFLAGS(NUSFLAGS_DSP_MULT),
-       .NDSFLAGS(NDSFLAGS_DSP_MULT)
+       .NDSFLAGS(NDSFLAGS_DSP_MULT),
+       .WAPUTAG(WAPUTAG)
        )
    dsp_mult_ifs [NAPUS_DSP_MULT-1:0] ();
 
@@ -170,6 +203,7 @@ module apu_cluster
        .APUTYPE(APUTYPE_DSP_MULT),
 
        .WOP(WOP_DSP_MULT),
+       .WAPUTAG(WAPUTAG),
        .NARGS(3),
        .NUSFLAGS(NUSFLAGS_DSP_MULT),
        .NDSFLAGS(NDSFLAGS_DSP_MULT)
@@ -187,7 +221,8 @@ module apu_cluster
         begin : dsp_mult_wrap
            dsp_mult_wrapper
              #(
-               .C_DSP_MULT_PIPE_REGS(C_DSP_PIPE_REGS)
+               .C_DSP_MULT_PIPE_REGS(C_DSP_PIPE_REGS),
+               .TAG_WIDTH(WAPUTAG)
                )
            dsp_mult_wrap_i
              (
@@ -224,7 +259,8 @@ module apu_cluster
        .WOP(WOP_INT_MULT),
        .NARGS(3),
        .NUSFLAGS(NUSFLAGS_INT_MULT),
-       .NDSFLAGS(NDSFLAGS_INT_MULT)
+       .NDSFLAGS(NDSFLAGS_INT_MULT),
+       .WAPUTAG(WAPUTAG)
        )
    int_mult_ifs [NAPUS_INT_MULT-1:0] ();
 
@@ -239,6 +275,7 @@ module apu_cluster
        .APUTYPE(APUTYPE_INT_MULT),
 
        .WOP(WOP_INT_MULT),
+       .WAPUTAG(WAPUTAG),
        .NARGS(3),
        .NUSFLAGS(NUSFLAGS_INT_MULT),
        .NDSFLAGS(NDSFLAGS_INT_MULT)
@@ -254,7 +291,11 @@ module apu_cluster
    // INT_MULT_WRAPPER
       for (genvar i = 0; i < NAPUS_INT_MULT; i++)
         begin : int_mult_wrap
-           int_mult_wrapper  int_mult_wrap_i
+           int_mult_wrapper
+             #(
+               .TAG_WIDTH(WAPUTAG)
+               )  
+           int_mult_wrap_i
              (
               .clk_i            ( clk_i                            ),
               .rst_ni           ( rst_ni                           ),
@@ -283,7 +324,8 @@ module apu_cluster
        .WOP(WOP_INT_DIV),
        .NARGS(3),
        .NUSFLAGS(NUSFLAGS_INT_DIV),
-       .NDSFLAGS(NDSFLAGS_INT_DIV)
+       .NDSFLAGS(NDSFLAGS_INT_DIV),
+       .WAPUTAG(WAPUTAG)
        )
    int_div_ifs [NAPUS_INT_DIV-1:0] ();
 
@@ -298,6 +340,7 @@ module apu_cluster
        .APUTYPE(APUTYPE_INT_DIV),
 
        .WOP(WOP_INT_DIV),
+       .WAPUTAG(WAPUTAG),
        .NARGS(2),
        .NUSFLAGS(NUSFLAGS_INT_DIV),
        .NDSFLAGS(NDSFLAGS_INT_DIV)
@@ -313,7 +356,11 @@ module apu_cluster
    // INT_DIV_WRAPPER
       for (genvar i = 0; i < NAPUS_INT_DIV; i++)
         begin : int_div_wrap
-           int_div  int_div_i
+           int_div
+             #(
+               .TAG_WIDTH(WAPUTAG)
+               )  
+           int_div_i
              (
               .clk_i            ( clk_i                           ),
               .rst_ni           ( rst_ni                          ),
@@ -345,7 +392,8 @@ module apu_cluster
        .WOP(WOP_SQRT),
        .NARGS(1),
        .NUSFLAGS(NUSFLAGS_SQRT),
-       .NDSFLAGS(NDSFLAGS_SQRT)
+       .NDSFLAGS(NDSFLAGS_SQRT),
+       .WAPUTAG(WAPUTAG)
        )
    sqrt_ifs [NAPUS_SQRT-1:0] ();
 
@@ -355,7 +403,8 @@ module apu_cluster
        .WOP(WOP_DIV),
        .NARGS(2),
        .NUSFLAGS(NUSFLAGS_DIV),
-       .NDSFLAGS(NDSFLAGS_DIV)
+       .NDSFLAGS(NDSFLAGS_DIV),
+       .WAPUTAG(WAPUTAG)
        )
    div_ifs [NAPUS_DIV-1:0] ();
    
@@ -365,7 +414,8 @@ module apu_cluster
        .WOP(WOP_DIVSQRT),
        .NARGS(2),
        .NUSFLAGS(NUSFLAGS_DIVSQRT),
-       .NDSFLAGS(NDSFLAGS_DIVSQRT)
+       .NDSFLAGS(NDSFLAGS_DIVSQRT),
+       .WAPUTAG(WAPUTAG)
        )
    divsqrt_ifs [NAPUS_DIVSQRT-1:0] ();
 
@@ -375,7 +425,8 @@ module apu_cluster
        .WOP(WOP_ADDSUB),
        .NARGS(2),
        .NUSFLAGS(NUSFLAGS_ADDSUB),
-       .NDSFLAGS(NDSFLAGS_ADDSUB)
+       .NDSFLAGS(NDSFLAGS_ADDSUB),
+       .WAPUTAG(WAPUTAG)
        )
    addsub_ifs [NAPUS_ADDSUB-1:0] ();
 
@@ -385,7 +436,8 @@ module apu_cluster
        .WOP(WOP_MULT),
        .NARGS(2),
        .NUSFLAGS(NUSFLAGS_MULT),
-       .NDSFLAGS(NDSFLAGS_MULT)
+       .NDSFLAGS(NDSFLAGS_MULT),
+       .WAPUTAG(WAPUTAG)
        )
    mult_ifs [NAPUS_MULT-1:0] ();
 
@@ -395,7 +447,8 @@ module apu_cluster
        .WOP(WOP_CAST),
        .NARGS(1),
        .NUSFLAGS(NUSFLAGS_CAST),
-       .NDSFLAGS(NDSFLAGS_CAST)
+       .NDSFLAGS(NDSFLAGS_CAST),
+       .WAPUTAG(WAPUTAG)
        )
    cast_ifs [NAPUS_CAST-1:0] ();
 
@@ -405,14 +458,15 @@ module apu_cluster
        .WOP(WOP_MAC),
        .NARGS(3),
        .NUSFLAGS(NUSFLAGS_MAC),
-       .NDSFLAGS(NDSFLAGS_MAC)
+       .NDSFLAGS(NDSFLAGS_MAC),
+       .WAPUTAG(WAPUTAG)
        )
    mac_ifs [NAPUS_MAC-1:0] ();
 
    generate
       if (SHARED_FP == 1) begin : shared_fpu
 
-         if (SHARED_FP_SQRT == 1) begin : shared_fp_sqrt
+         if (SHARED_FP_DIVSQRT == 1) begin : shared_fp_sqrt
             
             marx
               #(
@@ -422,6 +476,7 @@ module apu_cluster
                 .APUTYPE(APUTYPE_SQRT),
 
                 .WOP(WOP_SQRT),
+                .WAPUTAG(WAPUTAG),
                 .NARGS(1),
                 .NUSFLAGS(NUSFLAGS_SQRT),
                 .NDSFLAGS(NDSFLAGS_SQRT)
@@ -439,7 +494,8 @@ module apu_cluster
               begin : fp_sqrt_wrap
                  fp_sqrt_wrapper
                    #(
-                     .C_SQRT_PIPE_REGS(C_SQRT_PIPE_REGS)
+                     .C_SQRT_PIPE_REGS(C_SQRT_PIPE_REGS),
+                     .TAG_WIDTH(WAPUTAG)
                      )
                  fp_sqrt_wrap_i
                    (
@@ -467,6 +523,7 @@ module apu_cluster
              .APUTYPE(APUTYPE_ADDSUB),
 
              .WOP(WOP_ADDSUB),
+             .WAPUTAG(WAPUTAG),
              .NARGS(2),
              .NUSFLAGS(NUSFLAGS_ADDSUB),
              .NDSFLAGS(NDSFLAGS_ADDSUB)
@@ -484,7 +541,8 @@ module apu_cluster
            begin : fp_addsub_wrap
               fp_addsub_wrapper
                 #(
-                  .C_ADDSUB_PIPE_REGS(C_ADDSUB_PIPE_REGS)
+                  .C_ADDSUB_PIPE_REGS(C_ADDSUB_PIPE_REGS),
+                  .TAG_WIDTH(WAPUTAG)
                   )
               fp_addsub_wrap_i
                 (
@@ -504,7 +562,7 @@ module apu_cluster
                  );
            end
 
-         if (SHARED_FP_DIV) begin : shared_fp_div
+         if (SHARED_FP_DIVSQRT == 1) begin : shared_fp_div
  
             marx
               #(
@@ -514,6 +572,7 @@ module apu_cluster
                 .APUTYPE(APUTYPE_DIV),
 
                 .WOP(WOP_DIV),
+                .WAPUTAG(WAPUTAG),
                 .NARGS(2),
                 .NUSFLAGS(NUSFLAGS_DIV),
                 .NDSFLAGS(NDSFLAGS_DIV)
@@ -531,7 +590,8 @@ module apu_cluster
               begin : fp_div_wrap
                  fp_div_wrapper
                    #(
-                     .C_DIV_PIPE_REGS(C_DIV_PIPE_REGS)
+                     .C_DIV_PIPE_REGS(C_DIV_PIPE_REGS),
+                     .TAG_WIDTH(WAPUTAG)
                      )
                  fp_div_wrap_i
                    (
@@ -551,7 +611,7 @@ module apu_cluster
               end
          end
 
-         if (SHARED_DIVSQRT) begin : shared_fp_divsqrt
+         if (SHARED_FP_DIVSQRT == 2) begin : shared_fp_divsqrt
  
             marx
               #(
@@ -561,6 +621,7 @@ module apu_cluster
                 .APUTYPE(APUTYPE_DIVSQRT),
 
                 .WOP(WOP_DIVSQRT),
+                .WAPUTAG(WAPUTAG),
                 .NARGS(2),
                 .NUSFLAGS(NUSFLAGS_DIVSQRT),
                 .NDSFLAGS(NDSFLAGS_DIVSQRT)
@@ -577,6 +638,9 @@ module apu_cluster
             for (genvar i = 0; i < NAPUS_DIVSQRT; i++)
               begin : fp_divsqrt_wrap
                  fp_iter_divsqrt_wrapper
+                   #(
+                     .TAG_WIDTH(WAPUTAG)
+                     )
                  fp_iter_divsqrt_wrap_i
                    (
                     .clk_i            ( clk_i                           ),
@@ -605,6 +669,7 @@ module apu_cluster
              .APUTYPE(APUTYPE_MULT),
 
              .WOP(WOP_MULT),
+             .WAPUTAG(WAPUTAG),
              .NARGS(2),
              .NUSFLAGS(NUSFLAGS_MULT),
              .NDSFLAGS(NDSFLAGS_MULT)
@@ -622,7 +687,8 @@ module apu_cluster
            begin : fp_mult_wrap
               fp_mult_wrapper
                 #(
-                  .C_MULT_PIPE_REGS(C_MULT_PIPE_REGS)
+                  .C_MULT_PIPE_REGS(C_MULT_PIPE_REGS),
+                  .TAG_WIDTH(WAPUTAG)
                   )
               fp_mult_wrap_i
                 (
@@ -651,6 +717,7 @@ module apu_cluster
              .APUTYPE(APUTYPE_MAC),
 
              .WOP(WOP_MAC),
+             .WAPUTAG(WAPUTAG),
              .NARGS(3),
              .NUSFLAGS(NUSFLAGS_MAC),
              .NDSFLAGS(NDSFLAGS_MAC)
@@ -668,7 +735,8 @@ module apu_cluster
            begin : fp_mac_wrap
               fp_mac_wrapper
                 #(
-                  .C_MAC_PIPE_REGS(C_MAC_PIPE_REGS)
+                  .C_MAC_PIPE_REGS(C_MAC_PIPE_REGS),
+                  .TAG_WIDTH(WAPUTAG)
                   )
               fp_mac_wrap_i
                 (
@@ -699,6 +767,7 @@ module apu_cluster
              .APUTYPE(APUTYPE_CAST),
 
              .WOP(WOP_CAST),
+             .WAPUTAG(WAPUTAG),
              .NARGS(1),
              .NUSFLAGS(NUSFLAGS_CAST),
              .NDSFLAGS(NDSFLAGS_CAST)
@@ -716,7 +785,8 @@ module apu_cluster
            begin : fp_cast_wrap
               fp_cast_wrapper
                 #(
-                  .C_CAST_PIPE_REGS(C_CAST_PIPE_REGS)
+                  .C_CAST_PIPE_REGS(C_CAST_PIPE_REGS),
+                  .TAG_WIDTH(WAPUTAG)
                   )
               fp_cast_wrap_i
                 (

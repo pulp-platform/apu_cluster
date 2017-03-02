@@ -21,11 +21,11 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-import apu_package::*;
+import apu_cluster_package::*;
 
 module int_mult_wrapper
 #(
-  parameter TAG_WIDTH = WAPUTAG
+  parameter TAG_WIDTH = 0
 )
  (
   // Clock and Reset

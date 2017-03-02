@@ -26,11 +26,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import riscv_defines::*;
-import apu_package::*;
+import apu_cluster_package::*;
 
 module int_div 
 #(
-  parameter TAG_WIDTH = WAPUTAG,
+  parameter TAG_WIDTH = 0,
   parameter STAT_WIDTH = NUSFLAGS_INT_DIV
 )
 (

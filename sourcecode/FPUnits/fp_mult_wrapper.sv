@@ -21,12 +21,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-import apu_package::*;
+import apu_cluster_package::*;
 
 module fp_mult_wrapper
 #(
   parameter C_MULT_PIPE_REGS = 0,
-  parameter TAG_WIDTH = WAPUTAG,
+  parameter TAG_WIDTH = 0,
   parameter RND_WIDTH = NDSFLAGS_MULT,
   parameter STAT_WIDTH = NUSFLAGS_MULT
 )

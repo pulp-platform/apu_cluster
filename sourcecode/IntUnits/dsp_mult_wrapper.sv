@@ -21,12 +21,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-import apu_package::*;
+import apu_cluster_package::*;
 
 module dsp_mult_wrapper
 #(
   parameter C_DSP_MULT_PIPE_REGS = 0,
-  parameter TAG_WIDTH = WAPUTAG
+  parameter TAG_WIDTH = 0
 )
  (
   // Clock and Reset

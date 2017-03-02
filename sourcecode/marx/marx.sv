@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-import apu_package::*;
+import apu_cluster_package::*;
 
 module marx 
   #(
@@ -34,10 +34,12 @@ module marx
     parameter NARB     = 1, // valid 1:NAPUS
     parameter APUTYPE  = -1,
   
-    parameter WOP      = WOP_CPU,      // APU params
-    parameter NARGS    = NARGS_CPU,
-    parameter NUSFLAGS = NUSFLAGS_CPU,
-    parameter NDSFLAGS = NDSFLAGS_CPU
+    parameter WOP      = 0,      // APU params
+    parameter WAPUTAG  = 0,
+    parameter NARGS    = 0,
+    parameter NUSFLAGS = 0,
+    parameter NDSFLAGS = 0,
+    parameter WCPUTAG  = 0
     )
    (
     input clk_ci,
@@ -45,7 +47,7 @@ module marx
     cpu_marx_if.marx cpus [NCPUS-1:0],
     marx_apu_if.marx apus [NAPUS-1:0]
     );
-   
+      
    marx_arbiter_if #(.NIN(NCPUS/NARB),.NOUT(NAPUS/NARB)) arb [NARB-1:0] ();
          
    generate
@@ -111,7 +113,7 @@ module marx
          end
 
 
-         logic [WARG-1:0]     cpus_operands_ds_d [NCPUS-1:0][NARGS-1:0];
+         logic [31:0]         cpus_operands_ds_d [NCPUS-1:0][NARGS-1:0];
          logic [WOP-1:0]      cpus_op_ds_d       [NCPUS-1:0];
          logic [WCPUTAG-1:0]  cpus_tag_ds_d      [NCPUS-1:0];
          logic [NDSFLAGS-1:0] cpus_flags_ds_d    [NCPUS-1:0];
@@ -178,7 +180,7 @@ module marx
          // connection map, where apu_ack_s[CPU][APU] is 1 if the given CPU
          // acknowledges the result of the given APU.
          logic                             apu_req_s     [NAPUS-1:0];
-         logic [WRESULT-1:0]               apu_result_d  [NAPUS-1:0];
+         logic [31:0]                      apu_result_d  [NAPUS-1:0];
          logic [NUSFLAGS-1:0]              apu_flags_d   [NAPUS-1:0];
          logic [WCPUTAG-1:0]               apu_tag_d     [NAPUS-1:0];
          logic [NAPUS-1:0] [NCPUS-1:0]     apu_target_s;

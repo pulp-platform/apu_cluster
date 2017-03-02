@@ -21,12 +21,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-import apu_package::*;
+import apu_cluster_package::*;
 
 module fp_sqrt_wrapper
 #(
   parameter C_SQRT_PIPE_REGS = 0,
-  parameter TAG_WIDTH = WAPUTAG,
+  parameter TAG_WIDTH = 0,
   parameter RND_WIDTH = NDSFLAGS_SQRT,
   parameter STAT_WIDTH = NUSFLAGS_SQRT
 )

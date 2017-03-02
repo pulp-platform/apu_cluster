@@ -21,12 +21,12 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-import apu_package::*;
+import apu_cluster_package::*;
 
 module fp_div_wrapper
 #(
   parameter C_DIV_PIPE_REGS = 2,
-  parameter TAG_WIDTH = WAPUTAG,
+  parameter TAG_WIDTH = 0,
   parameter RND_WIDTH = NDSFLAGS_DIV,
   parameter STAT_WIDTH = NUSFLAGS_DIV
 )

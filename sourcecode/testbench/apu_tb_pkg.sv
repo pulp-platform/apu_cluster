@@ -24,6 +24,17 @@ import apu_package::*;
 	 const time RESP_ACQ_DEL       = CLK_PERIOD*0.9;              // Response aquisition delay
 	 const time RESET_DEL          = 50ns + STIM_APP_DEL;         // Delay of the reset
 
+
+   parameter C_OP_ADD  = 0;
+   parameter C_OP_SUB  = 1;
+   parameter C_OP_MULT = 2;
+   parameter C_OP_MAC  = 3;
+   parameter C_OP_DIV  = 4;
+   parameter C_OP_SQRT = 5;
+   parameter C_OP_ITF  = 6;
+   parameter C_OP_FTI  = 7;
+
+   parameter C_N_OPS    = 8;
 	 
 	 // --------------------------------------------------------------------------
    //
