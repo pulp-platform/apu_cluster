@@ -29,6 +29,9 @@ module apu_cluster
     parameter C_NB_CORES         = 4,
     parameter NDSFLAGS_CPU       = 0,
     parameter NUSFLAGS_CPU       = 0,
+    parameter WOP_CPU            = 0,
+    parameter NARGS_CPU          = 0,
+    parameter WAPUTYPE           = 0,
     parameter SHARED_FP          = 0,
     parameter SHARED_DSP_MULT    = 0,
     parameter SHARED_INT_MULT    = 0,
@@ -75,7 +78,15 @@ module apu_cluster
 
    localparam C_APUTYPES   = (SHARED_FP) ? (SHARED_FP_DIVSQRT==1) ? APUTYPE_FP+6 : (SHARED_FP_DIVSQRT==2) ? APUTYPE_FP+5 : APUTYPE_FP+4 : SHARED_DSP_MULT + SHARED_INT_DIV + SHARED_INT_MULT;
 
-   cpu_marx_if marx_ifs [C_APUTYPES-1:0][C_NB_CORES-1:0] ();
+   cpu_marx_if
+     #(
+       .WOP_CPU(WOP_CPU),
+       .WAPUTYPE(WAPUTYPE),
+			 .NUSFLAGS_CPU(NUSFLAGS_CPU),
+			 .NDSFLAGS_CPU(NDSFLAGS_CPU),
+       .NARGS_CPU(NARGS_CPU)
+       )
+   marx_ifs [C_APUTYPES-1:0][C_NB_CORES-1:0] ();
    
    //////////////////////////
    // multi-marx splitter  //
