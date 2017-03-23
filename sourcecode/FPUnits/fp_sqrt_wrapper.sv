@@ -17,7 +17,7 @@
 // Project Name:   Shared APU                                                 //
 // Language:       SystemVerilog                                              //
 //                                                                            //
-// Description:    Wraps the DW fp-sqrt unit                                  //
+// Description:    Wraps the fp-sqrt unit                                     //
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -83,20 +83,39 @@ module fp_sqrt_wrapper
    assign Status_o          = Status_DP[C_POST_PIPE_REGS];
    assign Ready_o           = 1'b1;
    
-   DW_fp_sqrt
-     #(
-       .sig_width(SIG_WIDTH),
-       .exp_width(EXP_WIDTH),
-       .ieee_compliance(IEEE_COMP)
-       )
-   fp_sqrt_i
-     (
-      .a(OpA_DP[C_PRE_PIPE_REGS]),
-      .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
-      .z(Res_DP[0]),
-      .status(Status_DP[0])
-      );
+   if (FP_SIM_MODELS == 1)
+     begin
+        shortreal              a, res;
+        
+        assign a = $bitstoshortreal(OpA_DP[C_PRE_PIPE_REGS]);
+        
+        // rounding mode is ignored here
+        assign res = a**0.5;
+        
+        // convert to logic again
+        assign Res_DP[0] = $shortrealtobits(res);
 
+        // not used in simulation model
+        assign Status_DP[0] = '0;
+     end
+   else
+     begin
+        
+        DW_fp_sqrt
+          #(
+            .sig_width(SIG_WIDTH),
+            .exp_width(EXP_WIDTH),
+            .ieee_compliance(IEEE_COMP)
+            )
+        fp_sqrt_i
+          (
+           .a(OpA_DP[C_PRE_PIPE_REGS]),
+           .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
+           .z(Res_DP[0]),
+           .status(Status_DP[0])
+           );
+     end
+   
    // PRE_PIPE_REGS
    generate
     genvar i;

@@ -17,7 +17,7 @@
 // Project Name:   Shared APU                                                 //
 // Language:       SystemVerilog                                              //
 //                                                                            //
-// Description:    Wraps the DW fp-mac unit                                   //
+// Description:    Wraps the fp-mac unit                                      //
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -89,58 +89,42 @@ module fp_mac_wrapper
    assign Tag_o             = TagPost_DP[C_POST_PIPE_REGS];
    assign Status_o          = Status_DP[C_POST_PIPE_REGS];
    assign Ready_o           = 1'b1;
-//`define MAC
-`ifndef MAC
-   DW_fp_mac
-     #(
-       .sig_width(SIG_WIDTH),
-       .exp_width(EXP_WIDTH),
-       .ieee_compliance(IEEE_COMP)
-       )
-   fp_mac_i
-     (
-      .a(OpA_DP[C_PRE_PIPE_REGS]),
-      .b(OpB_DP[C_PRE_PIPE_REGS]),
-      .c(OpC_DP[C_PRE_PIPE_REGS]),
-      .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
-      .z(Res_DP[0]),
-      .status(Status_DP[0])
-      );
-`else
-   logic [31:0]           tmp_result;
 
-   DW_fp_mult
-     #(
-       .sig_width(SIG_WIDTH),
-       .exp_width(EXP_WIDTH),
-       .ieee_compliance(IEEE_COMP)
-       )
-   fp_mult_i
-     (
-      .a(OpA_DP[C_PRE_PIPE_REGS]),
-      .b(OpB_DP[C_PRE_PIPE_REGS]),
-      .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
-      .z(tmp_result),
-      .status()
-      );
-
-   DW_fp_addsub
-     #(
-       .sig_width(SIG_WIDTH),
-       .exp_width(EXP_WIDTH),
-       .ieee_compliance(IEEE_COMP)
-       )
-   fp_addsub_i
-     (
-      .a(OpC_DP[C_PRE_PIPE_REGS]),
-      .b(tmp_result),
-      .op(1'b0),
-      .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
-      .z(Res_DP[0]),
-      .status(Status_DP[0])
-      );
-   
-`endif
+   if (FP_SIM_MODELS == 1)
+     begin
+        shortreal              a, b, c, res;
+        
+        assign a = $bitstoshortreal(OpA_DP[C_PRE_PIPE_REGS]);
+        assign b = $bitstoshortreal(OpB_DP[C_PRE_PIPE_REGS]);
+        assign c = $bitstoshortreal(OpC_DP[C_PRE_PIPE_REGS]);
+        
+        // rounding mode is ignored here
+        assign res = (a*b) + c;
+        
+        // convert to logic again
+        assign Res_DP[0] = $shortrealtobits(res);
+        
+        // not used in simulation model
+        assign Status_DP[0] = '0;
+     end
+   else
+     begin    
+        DW_fp_mac
+          #(
+            .sig_width(SIG_WIDTH),
+            .exp_width(EXP_WIDTH),
+            .ieee_compliance(IEEE_COMP)
+            )
+        fp_mac_i
+          (
+           .a(OpA_DP[C_PRE_PIPE_REGS]),
+           .b(OpB_DP[C_PRE_PIPE_REGS]),
+           .c(OpC_DP[C_PRE_PIPE_REGS]),
+           .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
+           .z(Res_DP[0]),
+           .status(Status_DP[0])
+           );
+     end
    
    // PRE_PIPE_REGS
    generate

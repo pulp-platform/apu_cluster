@@ -97,37 +97,58 @@ module fp_cast_wrapper
                         
    assign OpA_I2F = F2I_SP[C_PRE_PIPE_REGS] ? '0 : OpA_DP[C_PRE_PIPE_REGS];
    assign OpA_F2I = F2I_SP[C_PRE_PIPE_REGS] ? OpA_DP[C_PRE_PIPE_REGS] : '0;
-   
-   DW_fp_flt2i
-     #(
-       .sig_width(SIG_WIDTH),
-       .exp_width(EXP_WIDTH),
-       .ieee_compliance(IEEE_COMP)
-       )
-   fp_f2i_i
-     (
-      .a(OpA_F2I),
-      .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
-      .z(Res_F2I),
-      .status(Status_F2I)
-      );
 
-   DW_fp_i2flt
-     #(
-       .sig_width(SIG_WIDTH),
-       .exp_width(EXP_WIDTH)
-       )
-   fp_i2f_i
-     (
-      .a(OpA_I2F),
-      .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
-      .z(Res_I2F),
-      .status(Status_I2F)
-      );
+   if (FP_SIM_MODELS == 1)
+     begin
+        shortreal              a, res_itf;
+        logic [31:0]           res_fti;
+        
+        assign a = $bitstoshortreal(OpA_DP[C_PRE_PIPE_REGS]);
+        
+        // rounding mode is ignored here
+        assign res_fti = int'(a);
+        assign res_itf = shortreal'(OpA_DP[C_PRE_PIPE_REGS]);
+        
+        // convert to logic again
+        assign Res_DP[0] = F2I_SP[C_PRE_PIPE_REGS] ? res_fti : $shortrealtobits(res_itf);
 
-   assign Res_DP[0] = F2I_SP[C_PRE_PIPE_REGS] ? Res_F2I : Res_I2F;
-   assign Status_DP[0] = F2I_SP[C_PRE_PIPE_REGS] ? Status_F2I : Status_I2F;
+        // not used in simulation model
+        assign Status_DP[0] = '0;
+     end
+   else begin
       
+      DW_fp_flt2i
+        #(
+          .sig_width(SIG_WIDTH),
+          .exp_width(EXP_WIDTH),
+          .ieee_compliance(IEEE_COMP)
+          )
+      fp_f2i_i
+        (
+         .a(OpA_F2I),
+         .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
+         .z(Res_F2I),
+         .status(Status_F2I)
+         );
+
+      DW_fp_i2flt
+        #(
+          .sig_width(SIG_WIDTH),
+          .exp_width(EXP_WIDTH)
+          )
+      fp_i2f_i
+        (
+         .a(OpA_I2F),
+         .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
+         .z(Res_I2F),
+         .status(Status_I2F)
+         );
+
+      assign Res_DP[0] = F2I_SP[C_PRE_PIPE_REGS] ? Res_F2I : Res_I2F;
+      assign Status_DP[0] = F2I_SP[C_PRE_PIPE_REGS] ? Status_F2I : Status_I2F;
+
+   end
+   
    // PRE_PIPE_REGS
    generate
     genvar i;
