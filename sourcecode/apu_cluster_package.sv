@@ -38,9 +38,9 @@ package apu_cluster_package;
    
    // use very simple simulation models instead of DW instances
 `ifdef SIM_MODELS
-   parameter FP_SIM_MODELS = 0;
-`else
    parameter FP_SIM_MODELS = 1;
+`else
+   parameter FP_SIM_MODELS = 0;
 `endif
    
    // DSP-general
