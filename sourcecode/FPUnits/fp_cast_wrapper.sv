@@ -101,13 +101,15 @@ module fp_cast_wrapper
    if (FP_SIM_MODELS == 1)
      begin
         shortreal              a, res_itf;
+        logic [31:0]           tmp;
         logic [31:0]           res_fti;
+        
         
         assign a = $bitstoshortreal(OpA_DP[C_PRE_PIPE_REGS]);
         
-        // rounding mode is ignored here
-        assign res_fti = int'(a);
-        assign res_itf = shortreal'(OpA_DP[C_PRE_PIPE_REGS]);
+        assign res_fti = int'((Rnd_DP[C_PRE_PIPE_REGS] == 3'b001) ? (a>=0) ? $floor(a) : $ceil(a) : a);
+        
+        assign res_itf = shortreal'($signed(OpA_DP[C_PRE_PIPE_REGS]));
         
         // convert to logic again
         assign Res_DP[0] = F2I_SP[C_PRE_PIPE_REGS] ? res_fti : $shortrealtobits(res_itf);

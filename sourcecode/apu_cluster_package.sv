@@ -32,9 +32,9 @@ package apu_cluster_package;
    parameter PRIVATE_FP_SQRT   = 0;
    parameter PRIVATE_FP_DIVSQRT= 0;
 
-   // synopsys_translate_off
-`define SIM_MODELS
-   // synopsys_translate_on
+   // synopsys translate_off
+//`define SIM_MODELS
+   // synopsys translate_on
    
    // use very simple simulation models instead of DW instances
 `ifdef SIM_MODELS
