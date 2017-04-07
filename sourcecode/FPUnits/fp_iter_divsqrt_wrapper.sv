@@ -25,6 +25,9 @@
 
 import apu_cluster_package::*;
 
+`include "../apu_defines.sv"
+
+
 module fp_iter_divsqrt_wrapper
 #(
   parameter TAG_WIDTH = 0,

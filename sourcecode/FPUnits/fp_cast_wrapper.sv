@@ -25,6 +25,9 @@
 
 import apu_cluster_package::*;
 
+`include "../apu_defines.sv"
+
+
 module fp_cast_wrapper
 #(
   parameter C_CAST_PIPE_REGS = 0,
@@ -100,27 +103,25 @@ module fp_cast_wrapper
    assign OpA_I2F = F2I_SP[C_PRE_PIPE_REGS] ? '0 : OpA_DP[C_PRE_PIPE_REGS];
    assign OpA_F2I = F2I_SP[C_PRE_PIPE_REGS] ? OpA_DP[C_PRE_PIPE_REGS] : '0;
 
-   if (FP_SIM_MODELS == 1)
-     begin
-        shortreal              a, res_itf;
-        logic [31:0]           tmp;
-        logic [31:0]           res_fti;
-        
-        
-        assign a = $bitstoshortreal(OpA_DP[C_PRE_PIPE_REGS]);
-        
-        assign res_fti = int'((Rnd_DP[C_PRE_PIPE_REGS] == 3'b001) ? (a>=0) ? $floor(a) : $ceil(a) : a);
-        
-        assign res_itf = shortreal'($signed(OpA_DP[C_PRE_PIPE_REGS]));
-        
-        // convert to logic again
-        assign Res_DP[0] = F2I_SP[C_PRE_PIPE_REGS] ? res_fti : $shortrealtobits(res_itf);
+`ifdef FP_SIM_MODELS
+   shortreal               a, res_itf;
+   logic [31:0]            tmp;
+   logic [31:0]            res_fti;
+   
+   
+   assign a = $bitstoshortreal(OpA_DP[C_PRE_PIPE_REGS]);
+   
+   assign res_fti = int'((Rnd_DP[C_PRE_PIPE_REGS] == 3'b001) ? (a>=0) ? $floor(a) : $ceil(a) : a);
+   
+   assign res_itf = shortreal'($signed(OpA_DP[C_PRE_PIPE_REGS]));
+   
+   // convert to logic again
+   assign Res_DP[0] = F2I_SP[C_PRE_PIPE_REGS] ? res_fti : $shortrealtobits(res_itf);
 
-        // not used in simulation model
-        assign Status_DP[0] = '0;
-     end
-   else begin
-      
+   // not used in simulation model
+   assign Status_DP[0] = '0;
+
+`else
       DW_fp_flt2i
         #(
           .sig_width(SIG_WIDTH),
@@ -150,8 +151,7 @@ module fp_cast_wrapper
 
       assign Res_DP[0] = F2I_SP[C_PRE_PIPE_REGS] ? Res_F2I : Res_I2F;
       assign Status_DP[0] = F2I_SP[C_PRE_PIPE_REGS] ? Status_F2I : Status_I2F;
-
-   end
+`endif
    
    // PRE_PIPE_REGS
    generate

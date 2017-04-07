@@ -208,27 +208,28 @@ module marx
          // two APUs have a result for the same CPU, the APU with the lower index
          // takes precedence and is routed to its CPU, with the other APU being
          // stalled.
-         for (genvar i = 0; i < NCPUS; ++i) begin
-            always_comb begin
-               var valid; valid = 0;
-               cpus[i].result_us_d = '0;
-               cpus[i].flags_us_d = '0;
-               cpus[i].tag_us_d = '0;
-               for (int n = 0; n < NAPUS; ++n) begin
-                  if (~valid && apu_target_s[n][i] && apu_req_s[n]) begin
-                     apu_ack_s[i][n] = cpus[i].ready_us_s;
-                     cpus[i].result_us_d = apu_result_d[n];
-                     cpus[i].flags_us_d = apu_flags_d[n];
-                     if(WCPUTAG > 0) begin cpus[i].tag_us_d = apu_tag_d[n]; end
-                     valid = 1;
-                  end else begin
-                     apu_ack_s[i][n] = 0;
+         for (genvar j = 0; j < NARB; ++j) begin
+            for (genvar i = 0; i < NCPUS/NARB; ++i) begin
+               always_comb begin
+                  var valid; valid = 0;
+                  cpus[i+j*NCPUS/NARB].result_us_d = '0;
+                  cpus[i+j*NCPUS/NARB].flags_us_d = '0;
+                  cpus[i+j*NCPUS/NARB].tag_us_d = '0;
+                  for (int n = 0; n < NAPUS/NARB; ++n) begin
+                     if (~valid && apu_target_s[n+j*NAPUS/NARB][i+j*NCPUS/NARB] && apu_req_s[n+j*NAPUS/NARB]) begin
+                        apu_ack_s[i+j*NCPUS/NARB][n+j*NAPUS/NARB]     = cpus[i+j*NCPUS/NARB].ready_us_s;
+                        cpus[i+j*NCPUS/NARB].result_us_d              = apu_result_d[n+j*NAPUS/NARB];
+                        cpus[i+j*NCPUS/NARB].flags_us_d               = apu_flags_d[n+j*NAPUS/NARB];
+                        if(WCPUTAG > 0) begin cpus[i+j*NCPUS/NARB].tag_us_d = apu_tag_d[n+j*NAPUS/NARB]; end
+                        valid = 1;
+                     end else begin
+                        apu_ack_s[i+j*NCPUS/NARB][n+j*NAPUS/NARB]     = 0;
+                     end
                   end
+                  cpus[i+j*NCPUS/NARB].valid_us_s = valid;
                end
-               cpus[i].valid_us_s = valid;
             end
          end
-         
       end
 
    endgenerate

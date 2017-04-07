@@ -25,6 +25,9 @@
 
 import apu_cluster_package::*;
 
+`include "../apu_defines.sv"
+
+
 module fp_div_wrapper
 #(
   parameter C_DIV_PIPE_REGS = 2,
@@ -89,25 +92,22 @@ module fp_div_wrapper
    assign Ready_o           = 1'b1;
    
    
-   if (FP_SIM_MODELS == 1)
-     begin
-        shortreal              a, b, res;
-        
-        assign a = $bitstoshortreal(OpA_DP[C_PRE_PIPE_REGS]);
-        assign b = $bitstoshortreal(OpB_DP[C_PRE_PIPE_REGS]);
-        
-        // rounding mode is ignored here
-        assign res = a/b;
-        
-        // convert to logic again
-        assign Res_DP[0] = $shortrealtobits(res);
+`ifdef FP_SIM_MODELS
+   shortreal              a, b, res;
+   
+   assign a = $bitstoshortreal(OpA_DP[C_PRE_PIPE_REGS]);
+   assign b = $bitstoshortreal(OpB_DP[C_PRE_PIPE_REGS]);
+   
+   // rounding mode is ignored here
+   assign res = a/b;
+   
+   // convert to logic again
+   assign Res_DP[0] = $shortrealtobits(res);
 
-        // not used in simulation model
-        assign Status_DP[0] = '0;
-     end
-   else
-     begin
+   // not used in simulation model
+   assign Status_DP[0] = '0;
 
+`else
         DW_fp_div
           #(
             .sig_width(SIG_WIDTH),
@@ -122,7 +122,7 @@ module fp_div_wrapper
            .z(Res_DP[0]),
            .status(Status_DP[0])
            );
-     end
+`endif
    
    // PRE_PIPE_REGS
    generate

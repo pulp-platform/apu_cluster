@@ -55,10 +55,10 @@ module apu_cluster
    localparam integer NAPUS_DSP_MULT = (C_NB_CORES==2)      ? 1 : C_NB_CORES/2;
    localparam integer NAPUS_INT_MULT = (C_NB_CORES==2)      ? 1 : C_NB_CORES/2;
    localparam integer NAPUS_INT_DIV  = (C_NB_CORES==2)      ? 1 : C_NB_CORES/4;
-   localparam integer NAPUS_ADDSUB   = (PRIVATE_FP_ADDSUB)  ? C_NB_CORES : (C_NB_CORES==2) ? 1 : C_NB_CORES/4;
-   localparam integer NAPUS_MULT     = (PRIVATE_FP_MULT)    ? C_NB_CORES : (C_NB_CORES==2) ? 1 : C_NB_CORES/4;
-   localparam integer NAPUS_CAST     = (PRIVATE_FP_CAST)    ? C_NB_CORES : (C_NB_CORES==2) ? 1 : C_NB_CORES/4;
-   localparam integer NAPUS_MAC      = (PRIVATE_FP_MAC)     ? C_NB_CORES : (C_NB_CORES==2) ? 1 : C_NB_CORES/4;
+   localparam integer NAPUS_ADDSUB   = (PRIVATE_FP_ADDSUB)  ? C_NB_CORES : (C_NB_CORES==2) ? 1 : C_NB_CORES/8;
+   localparam integer NAPUS_MULT     = (PRIVATE_FP_MULT)    ? C_NB_CORES : (C_NB_CORES==2) ? 1 : C_NB_CORES/8;
+   localparam integer NAPUS_CAST     = (PRIVATE_FP_CAST)    ? C_NB_CORES : (C_NB_CORES==2) ? 1 : C_NB_CORES/8;
+   localparam integer NAPUS_MAC      = (PRIVATE_FP_MAC)     ? C_NB_CORES : (C_NB_CORES==2) ? 1 : C_NB_CORES/8;
    localparam integer NAPUS_DIV      = (PRIVATE_FP_DIV)     ? C_NB_CORES : 1;
    localparam integer NAPUS_SQRT     = (PRIVATE_FP_SQRT)    ? C_NB_CORES : 1;
    localparam integer NAPUS_DIVSQRT  = (PRIVATE_FP_DIVSQRT) ? C_NB_CORES : 1;

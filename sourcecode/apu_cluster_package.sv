@@ -34,16 +34,6 @@ package apu_cluster_package;
    parameter PRIVATE_FP_SQRT   = 0;
    parameter PRIVATE_FP_DIVSQRT= 0;
 
-   // synopsys translate_off
-//`define SIM_MODELS
-   // synopsys translate_on
-   
-   // use very simple simulation models instead of DW instances
-`ifdef SIM_MODELS
-   parameter FP_SIM_MODELS = 1;
-`else
-   parameter FP_SIM_MODELS = 0;
-`endif
    
    // DSP-general
    parameter DSP_WIDTH    = 32;

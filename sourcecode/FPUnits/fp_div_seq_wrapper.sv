@@ -25,6 +25,9 @@
 
 import apu_cluster_package::*;
 
+`include "../apu_defines.sv"
+
+
 module fp_div_seq_wrapper
 #(
   parameter C_DIV_PIPE_REGS = 2,
