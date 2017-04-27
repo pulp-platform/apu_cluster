@@ -212,7 +212,7 @@ module apu_cluster
      #(
        .NCPUS(C_NB_CORES),
        .NAPUS(NAPUS_DSP_MULT),
-       .NARB(1),
+       .NARB(NAPUS_DSP_MULT),
        .APUTYPE(APUTYPE_DSP_MULT),
 
        .WOP(WOP_DSP_MULT),
