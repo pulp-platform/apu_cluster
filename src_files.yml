@@ -1,6 +1,7 @@
 apu_cluster:
   incdirs: [
     ../../rtl/includes,
+    ../../ips/riscv/include,
   ]
   files: [
     sourcecode/apu_cluster_package.sv,
