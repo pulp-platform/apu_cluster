@@ -211,7 +211,7 @@ module marx
          for (genvar j = 0; j < NARB; ++j) begin
             for (genvar i = 0; i < NCPUS/NARB; ++i) begin
                always_comb begin
-                  var valid; valid = 0;
+                  logic valid; valid = 0;
                   cpus[i+j*NCPUS/NARB].result_us_d = '0;
                   cpus[i+j*NCPUS/NARB].flags_us_d = '0;
                   cpus[i+j*NCPUS/NARB].tag_us_d = '0;

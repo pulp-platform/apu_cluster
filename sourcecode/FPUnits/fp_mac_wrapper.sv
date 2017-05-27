@@ -25,7 +25,7 @@
 
 import apu_cluster_package::*;
 
-`include "../apu_defines.sv"
+`include "apu_defines.sv"
 
 
 module fp_mac_wrapper
