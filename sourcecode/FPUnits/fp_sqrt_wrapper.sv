@@ -102,7 +102,11 @@ module fp_sqrt_wrapper
    // not used in simulation model
    assign Status_DP[0] = '0;
 
-`else   
+`else
+   
+   logic [7:0]            status;
+   assign Status_DP[0] = {status[2], 1'b0, status[4], status[3], 1'b0};
+
    DW_fp_sqrt
      #(
        .sig_width(SIG_WIDTH),
@@ -114,7 +118,7 @@ module fp_sqrt_wrapper
       .a(OpA_DP[C_PRE_PIPE_REGS]),
       .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
       .z(Res_DP[0]),
-      .status(Status_DP[0])
+      .status(status)
       );
 `endif
    

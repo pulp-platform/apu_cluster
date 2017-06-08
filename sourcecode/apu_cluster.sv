@@ -64,6 +64,7 @@ module apu_cluster
    localparam integer NAPUS_DIVSQRT  = (PRIVATE_FP_DIVSQRT) ? C_NB_CORES : 1;
 
 
+   // careful when modifying the following parameters. C_APUTYPES has to match with what is defined in apu_package.sv, and the individual types have to match what is defined in the core (riscv_decoder.sv)
    localparam APUTYPE_DSP_MULT   = (SHARED_DSP_MULT) ? 0 : 0;
    localparam APUTYPE_INT_MULT   = (SHARED_INT_MULT) ? SHARED_DSP_MULT : 0;
    localparam APUTYPE_INT_DIV    = (SHARED_INT_DIV) ? SHARED_DSP_MULT + SHARED_INT_MULT : 0;
@@ -574,7 +575,7 @@ module apu_cluster
                  .Ready_o          ( addsub_ifs[i].ready_ds_s       ) 
                  );
            end
-
+         
          if (SHARED_FP_DIVSQRT == 1) begin : shared_fp_div
  
             marx

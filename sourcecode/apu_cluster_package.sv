@@ -72,37 +72,37 @@ package apu_cluster_package;
       
    // addsub
    parameter NDSFLAGS_ADDSUB  = 3;
-   parameter NUSFLAGS_ADDSUB  = 8;
+   parameter NUSFLAGS_ADDSUB  = 5;
    parameter WOP_ADDSUB       = 1;
          
    // mult
    parameter NDSFLAGS_MULT = 3;
-   parameter NUSFLAGS_MULT = 8;
+   parameter NUSFLAGS_MULT = 5;
    parameter WOP_MULT      = 1;
    
    // casts
    parameter NDSFLAGS_CAST = 3;
-   parameter NUSFLAGS_CAST = 8;
+   parameter NUSFLAGS_CAST = 5;
    parameter WOP_CAST      = 1;
    
    // mac
    parameter NDSFLAGS_MAC = 3;
-   parameter NUSFLAGS_MAC = 8;
+   parameter NUSFLAGS_MAC = 5;
    parameter WOP_MAC      = 2;
    
    // div
    parameter NDSFLAGS_DIV = 3;
-   parameter NUSFLAGS_DIV = 8;
+   parameter NUSFLAGS_DIV = 5;
    parameter WOP_DIV      = 1;
    
    // sqrt
    parameter NDSFLAGS_SQRT = 3;
-   parameter NUSFLAGS_SQRT = 8;
+   parameter NUSFLAGS_SQRT = 5;
    parameter WOP_SQRT      = 1;
    
    // iter divsqrt
    parameter NDSFLAGS_DIVSQRT = 3;
-   parameter NUSFLAGS_DIVSQRT = 8;
+   parameter NUSFLAGS_DIVSQRT = 5;
    parameter WOP_DIVSQRT      = 1;
    
    // FP-defines

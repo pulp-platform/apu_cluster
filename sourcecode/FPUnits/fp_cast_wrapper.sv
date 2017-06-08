@@ -122,6 +122,13 @@ module fp_cast_wrapper
    assign Status_DP[0] = '0;
 
 `else
+
+   logic [7:0]             status_f2i;
+   logic [7:0]             status_i2f;
+   
+   assign Status_F2I = {status_f2i[2], 1'b0, status_f2i[4], status_f2i[3], 1'b0};
+   assign Status_I2F = {status_i2f[2], 1'b0, status_i2f[4], status_i2f[3], 1'b0};
+                      
       DW_fp_flt2i
         #(
           .sig_width(SIG_WIDTH),
@@ -133,7 +140,7 @@ module fp_cast_wrapper
          .a(OpA_F2I),
          .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
          .z(Res_F2I),
-         .status(Status_F2I)
+         .status(status_f2i)
          );
 
       DW_fp_i2flt
@@ -146,7 +153,7 @@ module fp_cast_wrapper
          .a(OpA_I2F),
          .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
          .z(Res_I2F),
-         .status(Status_I2F)
+         .status(status_i2f)
          );
 
       assign Res_DP[0] = F2I_SP[C_PRE_PIPE_REGS] ? Res_F2I : Res_I2F;

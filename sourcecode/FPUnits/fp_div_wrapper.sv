@@ -108,20 +108,24 @@ module fp_div_wrapper
    assign Status_DP[0] = '0;
 
 `else
-        DW_fp_div
-          #(
-            .sig_width(SIG_WIDTH),
-            .exp_width(EXP_WIDTH),
-            .ieee_compliance(IEEE_COMP)
-            )
-        fp_div_i
-          (
-           .a(OpA_DP[C_PRE_PIPE_REGS]),
-           .b(OpB_DP[C_PRE_PIPE_REGS]),
-           .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
-           .z(Res_DP[0]),
-           .status(Status_DP[0])
-           );
+
+   logic [7:0]            status;
+   assign Status_DP[0] = {status[2], status[7], status[4], status[3], 1'b0};
+
+   DW_fp_div
+     #(
+       .sig_width(SIG_WIDTH),
+       .exp_width(EXP_WIDTH),
+       .ieee_compliance(IEEE_COMP)
+       )
+   fp_div_i
+     (
+      .a(OpA_DP[C_PRE_PIPE_REGS]),
+      .b(OpB_DP[C_PRE_PIPE_REGS]),
+      .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
+      .z(Res_DP[0]),
+      .status(status)
+      );
 `endif
    
    // PRE_PIPE_REGS

@@ -111,6 +111,9 @@ module fp_mac_wrapper
    // not used in simulation model
    assign Status_DP[0] = '0;
 `else
+   logic [7:0]            status;
+   assign Status_DP[0] = {status[2], 1'b0, status[4], status[3], 1'b0};
+
    DW_fp_mac
      #(
        .sig_width(SIG_WIDTH),
@@ -124,7 +127,7 @@ module fp_mac_wrapper
       .c(OpC_DP[C_PRE_PIPE_REGS]),
       .rnd(Rnd_DP[C_PRE_PIPE_REGS]),
       .z(Res_DP[0]),
-      .status(Status_DP[0])
+      .status(status)
       );
 `endif
    

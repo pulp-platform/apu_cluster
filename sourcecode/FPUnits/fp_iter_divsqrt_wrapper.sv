@@ -75,11 +75,11 @@ module fp_iter_divsqrt_wrapper
    
    // assign output
    assign Tag_o             = Tag_DP;
-   assign Status_o          = {div_zero, exp_of, exp_uf, 1'b0};
+   assign Status_o          = {1'b0, div_zero, exp_of, exp_uf, 1'b0};
    assign Ready_o           = divsqrt_ready;
    
    
-   div_sqrt_top fp_divsqrt_i
+   div_sqrt_top_tp fp_divsqrt_i
      (
       .Clk_CI(clk_i),
       .Rst_RBI(rst_ni),
@@ -88,6 +88,7 @@ module fp_iter_divsqrt_wrapper
       .Operand_a_DI(OpA_i),
       .Operand_b_DI(OpB_i),
       .RM_SI(Rnd_i[1:0]),
+      .Precision_ctl_SI( '0 ),
       .Result_DO(Res_o),
       .Exp_OF_SO(exp_uf),
       .Exp_UF_SO(exp_of),
