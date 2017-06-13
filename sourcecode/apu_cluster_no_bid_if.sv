@@ -64,6 +64,7 @@ module apu_cluster
    localparam integer NAPUS_DIVSQRT  = (PRIVATE_FP_DIVSQRT) ? C_NB_CORES : 1;
 
 
+   // careful when modifying the following parameters. C_APUTYPES has to match with what is defined in apu_package.sv, and the individual types have to match what is defined in the core (riscv_decoder.sv)
    localparam APUTYPE_DSP_MULT   = (SHARED_DSP_MULT) ? 0 : 0;
    localparam APUTYPE_INT_MULT   = (SHARED_INT_MULT) ? SHARED_DSP_MULT : 0;
    localparam APUTYPE_INT_DIV    = (SHARED_INT_DIV) ? SHARED_DSP_MULT + SHARED_INT_MULT : 0;
@@ -227,7 +228,7 @@ module apu_cluster
      (
       .clk_ci(clk_i),
       .rst_rbi(rst_ni),
-      .cpus(marx_ifs[APUTYPE_DSP_MULT*C_APUTYPES+C_NB_CORES-1:APUTYPE_DSP_MULT*C_APUTYPES]),
+      .cpus(marx_ifs[APUTYPE_DSP_MULT*C_NB_CORES+C_NB_CORES-1:APUTYPE_DSP_MULT*C_NB_CORES]),
       .apus(dsp_mult_ifs)
       );
    
@@ -299,7 +300,7 @@ module apu_cluster
      (
       .clk_ci(clk_i),
       .rst_rbi(rst_ni),
-      .cpus(marx_ifs[APUTYPE_INT_MULT*C_APUTYPES+C_NB_CORES-1:APUTYPE_INT_MULT*C_APUTYPES]),
+      .cpus(marx_ifs[APUTYPE_INT_MULT*C_NB_CORES+C_NB_CORES-1:APUTYPE_INT_MULT*C_NB_CORES]),
       .apus(int_mult_ifs)
       );
    
@@ -364,7 +365,7 @@ module apu_cluster
      (
       .clk_ci(clk_i),
       .rst_rbi(rst_ni),
-      .cpus(marx_ifs[APUTYPE_INT_DIV*C_APUTYPES+C_NB_CORES-1:APUTYPE_INT_DIV*C_APUTYPES]),
+      .cpus(marx_ifs[APUTYPE_INT_DIV*C_NB_CORES+C_NB_CORES-1:APUTYPE_INT_DIV*C_NB_CORES]),
       .apus(int_div_ifs)
       );
    
@@ -500,7 +501,7 @@ module apu_cluster
               (
                .clk_ci(clk_i),
                .rst_rbi(rst_ni),
-               .cpus(marx_ifs[APUTYPE_SQRT*C_APUTYPES+C_NB_CORES-1:APUTYPE_SQRT*C_APUTYPES]),
+               .cpus(marx_ifs[APUTYPE_SQRT*C_NB_CORES+C_NB_CORES-1:APUTYPE_SQRT*C_NB_CORES]),
                .apus(sqrt_ifs)
                );
             
@@ -547,7 +548,7 @@ module apu_cluster
            (
             .clk_ci(clk_i),
             .rst_rbi(rst_ni),
-            .cpus(marx_ifs[APUTYPE_ADDSUB*C_APUTYPES+C_NB_CORES-1:APUTYPE_ADDSUB*C_APUTYPES]),
+            .cpus(marx_ifs[APUTYPE_ADDSUB*C_NB_CORES+C_NB_CORES-1:APUTYPE_ADDSUB*C_NB_CORES]),
             .apus(addsub_ifs)
             );
 
@@ -596,7 +597,7 @@ module apu_cluster
               (
                .clk_ci(clk_i),
                .rst_rbi(rst_ni),
-               .cpus(marx_ifs[APUTYPE_DIV*C_APUTYPES+C_NB_CORES-1:APUTYPE_DIV*C_APUTYPES]),
+               .cpus(marx_ifs[APUTYPE_DIV*C_NB_CORES+C_NB_CORES-1:APUTYPE_DIV*C_NB_CORES]),
                .apus(div_ifs)
                );
             
@@ -645,7 +646,7 @@ module apu_cluster
               (
                .clk_ci(clk_i),
                .rst_rbi(rst_ni),
-               .cpus(marx_ifs[APUTYPE_DIVSQRT*C_APUTYPES+C_NB_CORES-1:APUTYPE_DIVSQRT*C_APUTYPES]),
+               .cpus(marx_ifs[APUTYPE_DIVSQRT*C_NB_CORES+C_NB_CORES-1:APUTYPE_DIVSQRT*C_NB_CORES]),
                .apus(divsqrt_ifs)
                );
             
@@ -693,7 +694,7 @@ module apu_cluster
            (
             .clk_ci(clk_i),
             .rst_rbi(rst_ni),
-            .cpus(marx_ifs[APUTYPE_MULT*C_APUTYPES+C_NB_CORES-1:APUTYPE_MULT*C_APUTYPES]),
+            .cpus(marx_ifs[APUTYPE_MULT*C_NB_CORES+C_NB_CORES-1:APUTYPE_MULT*C_NB_CORES]),
             .apus(mult_ifs)
             );
          
@@ -741,7 +742,7 @@ module apu_cluster
            (
             .clk_ci(clk_i),
             .rst_rbi(rst_ni),
-            .cpus(marx_ifs[APUTYPE_MAC*C_APUTYPES+C_NB_CORES-1:APUTYPE_MAC*C_APUTYPES]),
+            .cpus(marx_ifs[APUTYPE_MAC*C_NB_CORES+C_NB_CORES-1:APUTYPE_MAC*C_NB_CORES]),
             .apus(mac_ifs)
             );
          
@@ -791,7 +792,7 @@ module apu_cluster
            (
             .clk_ci(clk_i),
             .rst_rbi(rst_ni),
-            .cpus(marx_ifs[APUTYPE_CAST*C_APUTYPES+C_NB_CORES-1:APUTYPE_CAST*C_APUTYPES]),
+            .cpus(marx_ifs[APUTYPE_CAST*C_NB_CORES+C_NB_CORES-1:APUTYPE_CAST*C_NB_CORES]),
             .apus(cast_ifs)
             );
          
