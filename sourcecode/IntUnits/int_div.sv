@@ -27,7 +27,7 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-import riscv_defines::*;
+import riscv_defines_apu::*;
 import apu_cluster_package::*;
 
 module int_div 
