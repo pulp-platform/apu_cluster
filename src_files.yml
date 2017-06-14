@@ -3,6 +3,7 @@ apu_cluster:
     ../../rtl/includes,
     ../../ips/riscv/include,
     ./sourcecode,
+    ./sourcecode/FPUnits/dw02/src_ver,
   ]
   files: [
     sourcecode/apu_cluster_package.sv,
