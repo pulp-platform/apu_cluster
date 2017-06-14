@@ -50,7 +50,6 @@ module apu_cluster
     );
 
    localparam WAPUTAG = $clog2(C_NB_CORES);
-   localparam WCPUTAG = 0;
    
    localparam integer NAPUS_DSP_MULT = (C_NB_CORES==2)      ? 1 : C_NB_CORES/2;
    localparam integer NAPUS_INT_MULT = (C_NB_CORES==2)      ? 1 : C_NB_CORES/2;
@@ -99,14 +98,12 @@ module apu_cluster
    
    logic [31:0]                   cpus_result_us [C_NB_CORES-1:0];
    logic [NDSFLAGS_CPU-1:0]       cpus_flags_us  [C_NB_CORES-1:0];
-   logic [WCPUTAG-1:0]            cpus_tag_us    [C_NB_CORES-1:0];
    logic                          cpus_valid_us  [C_NB_CORES-1:0];
    
    logic                          marx_ack_ds    [C_APUTYPES-1:0][C_NB_CORES-1:0];
    
    logic [31:0]                   marx_result_us [C_APUTYPES-1:0][C_NB_CORES-1:0];
    logic [NUSFLAGS_CPU-1:0]       marx_flags_us  [C_APUTYPES-1:0][C_NB_CORES-1:0];
-   logic [WCPUTAG-1:0]            marx_tag_us    [C_APUTYPES-1:0][C_NB_CORES-1:0];
    logic                          marx_valid_us  [C_APUTYPES-1:0][C_NB_CORES-1:0];
 
    // assign cpu -> marx signals, temp signals
@@ -119,7 +116,6 @@ module apu_cluster
             assign marx_ifs[j][i].operands_ds_d   = cpus[i].operands_ds_d;
             assign marx_ifs[j][i].op_ds_d         = cpus[i].op_ds_d;
             assign marx_ifs[j][i].flags_ds_d      = cpus[i].flags_ds_d;
-            assign marx_ifs[j][i].tag_ds_d        = cpus[i].tag_ds_d;
 
             // ready signal from upstream interface
             assign marx_ifs[j][i].ready_us_s      = cpus[i].ready_us_s;
@@ -129,7 +125,6 @@ module apu_cluster
 
             assign marx_result_us[j][i]           = marx_ifs[j][i].result_us_d;
             assign marx_flags_us[j][i]            = marx_ifs[j][i].flags_us_d;
-            assign marx_tag_us[j][i]              = marx_ifs[j][i].tag_us_d;
             assign marx_valid_us[j][i]            = marx_ifs[j][i].valid_us_s;
          end
 
@@ -137,7 +132,6 @@ module apu_cluster
 
          assign cpus[i].result_us_d              = cpus_result_us[i];
          assign cpus[i].flags_us_d               = cpus_flags_us[i];
-         assign cpus[i].tag_us_d                 = cpus_tag_us[i];
          assign cpus[i].valid_us_s               = cpus_valid_us[i];
       end
    endgenerate
@@ -155,7 +149,6 @@ module apu_cluster
             valid_temp[i]       = 1'b0;
             cpus_result_us[i]   = '0;
             cpus_flags_us[i]    = '0;
-            cpus_tag_us[i]      = '0;
             
             for (int j = 0; j < C_APUTYPES; j++) begin
                // upstream interface
@@ -163,7 +156,6 @@ module apu_cluster
                   valid_temp[i]       = 1'b1;
                   cpus_result_us[i]   = marx_result_us[j][i];
                   cpus_flags_us[i]    = marx_flags_us[j][i];
-                  cpus_tag_us[i]      = marx_tag_us[j][i];
                end
 
                // ack for downstream request
