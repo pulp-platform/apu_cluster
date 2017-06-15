@@ -35,5 +35,5 @@ apu_cluster:
     sourcecode/IntUnits/int_div.sv,
     sourcecode/IntUnits/dsp_mult_wrapper.sv,
     sourcecode/IntUnits/int_mult_wrapper.sv,
-    sourcecode/apu_cluster.sv,
+    sourcecode/apu_cluster_no_bid_if.sv,
 ]
