@@ -112,21 +112,21 @@ module apu_cluster
       for (genvar i = 0; i < C_NB_CORES; i++) begin
          for (genvar j = 0; j < C_APUTYPES; j++) begin
             // downstream
-            assign marx_ifs[i*C_APUTYPES+j].req_ds_s        = cpus[i].req_ds_s;
-            assign marx_ifs[i*C_APUTYPES+j].type_ds_d       = cpus[i].type_ds_d;
-            assign marx_ifs[i*C_APUTYPES+j].operands_ds_d   = cpus[i].operands_ds_d;
-            assign marx_ifs[i*C_APUTYPES+j].op_ds_d         = cpus[i].op_ds_d;
-            assign marx_ifs[i*C_APUTYPES+j].flags_ds_d      = cpus[i].flags_ds_d;
+            assign marx_ifs[j*C_NB_CORES+i].req_ds_s        = cpus[i].req_ds_s;
+            assign marx_ifs[j*C_NB_CORES+i].type_ds_d       = cpus[i].type_ds_d;
+            assign marx_ifs[j*C_NB_CORES+i].operands_ds_d   = cpus[i].operands_ds_d;
+            assign marx_ifs[j*C_NB_CORES+i].op_ds_d         = cpus[i].op_ds_d;
+            assign marx_ifs[j*C_NB_CORES+i].flags_ds_d      = cpus[i].flags_ds_d;
 
             // ready signal from upstream interface
-            assign marx_ifs[i*C_APUTYPES+j].ready_us_s      = cpus[i].ready_us_s;
+            assign marx_ifs[j*C_NB_CORES+i].ready_us_s      = cpus[i].ready_us_s;
 
             // temps
-            assign marx_ack_ds[j][i]              = marx_ifs[i*C_APUTYPES+j].ack_ds_s;
+            assign marx_ack_ds[j][i]              = marx_ifs[j*C_NB_CORES+i].ack_ds_s;
 
-            assign marx_result_us[j][i]           = marx_ifs[i*C_APUTYPES+j].result_us_d;
-            assign marx_flags_us[j][i]            = marx_ifs[i*C_APUTYPES+j].flags_us_d;
-            assign marx_valid_us[j][i]            = marx_ifs[i*C_APUTYPES+j].valid_us_s;
+            assign marx_result_us[j][i]           = marx_ifs[j*C_NB_CORES+i].result_us_d;
+            assign marx_flags_us[j][i]            = marx_ifs[j*C_APUTYPES+i].flags_us_d;
+            assign marx_valid_us[j][i]            = marx_ifs[j*C_NB_CORES+i].valid_us_s;
          end
 
          assign cpus[i].ack_ds_s                 = cpus_ack_ds[i];
