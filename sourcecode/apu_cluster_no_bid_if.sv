@@ -125,7 +125,7 @@ module apu_cluster
             assign marx_ack_ds[j][i]              = marx_ifs[j*C_NB_CORES+i].ack_ds_s;
 
             assign marx_result_us[j][i]           = marx_ifs[j*C_NB_CORES+i].result_us_d;
-            assign marx_flags_us[j][i]            = marx_ifs[j*C_APUTYPES+i].flags_us_d;
+            assign marx_flags_us[j][i]            = marx_ifs[j*C_NB_CORES+i].flags_us_d;
             assign marx_valid_us[j][i]            = marx_ifs[j*C_NB_CORES+i].valid_us_s;
          end
 
