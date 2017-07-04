@@ -1,0 +1,197 @@
+% Determines the input encoding.
+\usepackage[%
+ utf8,
+% latin1
+]{inputenc}
+
+% ---------------------------------------------------------------------
+
+% Determines the output encoding.
+\usepackage[T1]{fontenc}
+
+% ---------------------------------------------------------------------
+
+% Determines language settings.
+\usepackage[%
+ english    % You may change this to 'ngerman' in order to write a
+            % german report.
+]{babel}
+
+% Provides image loading.
+\usepackage{graphicx}
+
+% ---------------------------------------------------------------------
+
+% Provides the algorithm environment
+\usepackage[ruled,%
+            linesnumbered]{algorithm2e}
+
+% ---------------------------------------------------------------------
+
+% Provides simple line spacings.
+\usepackage{setspace}
+
+% ---------------------------------------------------------------------
+
+% Provides colors in LaTeX.
+\usepackage{xcolor}
+
+% ---------------------------------------------------------------------
+
+% Provides nicer tables than the standard tables.
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage[para]{threeparttable}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{textcomp,lmodern}   % \textmu, \texteuro (lmodern to render \textmu correctly in PDF
+\usepackage{xspace}             % for 'intelligent' spacing
+\usepackage{rotating}           % for rotating table text (using sideways)
+\usepackage{color}
+\usepackage{listings}
+\usepackage{paralist}
+\usepackage{stfloats}
+\usepackage{array} 
+\usepackage{float}
+\usepackage{listings}
+\usepackage{amsmath}
+
+%\usepackage{caption}
+\usepackage{bytefield}
+
+\usepackage{fullpage}
+
+\usepackage{enumitem}
+
+\usepackage{tcolorbox}
+
+\usepackage{pdflscape}
+
+
+\usepackage{tikz-timing}[2009/05/15]
+
+\newcolumntype{x}[1]{>{\centering\arraybackslash\hspace{0pt}}p{#1}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%                                                                 %
+%%%%%     Custom Macros                                               %
+%%%%%                                                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Create an inline command for shell commands.
+\newcommand{\shell}[1]{\texttt{#1}}
+
+% Create an environment for a shell commands.
+\newenvironment{shellenv}%
+{\VerbatimEnvironment%
+ \begin{Sbox}\begin{minipage}{0.97\textwidth}\begin{Verbatim}%
+}%
+{\end{Verbatim}\end{minipage}\end{Sbox}%
+\setlength{\fboxsep}{6pt}\shadowbox{\TheSbox}}%
+
+% Create an inline command for files.
+\newcommand{\file}[1]{\texttt{#1}}
+
+% Create a command for command parameters.
+\newcommand{\parameter}[1]{$<$#1$>$}
+
+\newcommand{\instr}[1]{\texttt{#1}}
+
+
+\definecolor{lightGray}{RGB}{240,240,240}
+
+\lstnewenvironment{instrenv}{\lstset{backgroundcolor=\color{lightGray},frame=single,basicstyle=\ttfamily}}{}
+
+\newcommand{\orion}{\textsc{Or10n}\xspace}
+\newcommand{\riscv}{\mbox{RISC-V}\xspace}
+\newcommand{\rvcore}{\textsc{RI5CY}\xspace}
+\newcommand{\pulpino}{\textsc{PULPino}\xspace}
+\newcommand{\pulp}{\textsc{PULP}\xspace}
+
+\newcommand\signal[1]{{\ttfamily\bfseries #1}}
+
+\newcommand\csrDesc[4]{%
+  \textbf{CSR Address:} \texttt{#1}\\%
+  \textbf{Reset Value:} \texttt{#2}\\%
+  \begin{figure}[H]
+    \centering
+    #4
+    \caption{#3}
+  \end{figure}}
+
+\newcommand\instrDesc[3]{%
+\subsection{#1}
+\begin{center}
+  #3
+\end{center}
+\textbf{Operation:} \texttt{#2}%
+}
+
+\newenvironment{boxnote}%
+{%
+  \begin{tcolorbox}[colback=red!5!white,colframe=red!75!black,title=Note]%
+}%
+{%
+  \end{tcolorbox}%
+}%
+
+\renewcommand{\eqref}[1]{(\ref{#1})}    % when used w/ amsmath
+\newcommand{\secref}[1]{\mbox{Section~\ref{#1}}}
+\newcommand{\chref}[1]{\mbox{Chapter~\ref{#1}}}
+\newcommand{\appref}[1]{\mbox{Application~\ref{#1}}}
+\newcommand{\figref}[1]{\mbox{Figure~\ref{#1}}}
+\newcommand{\tabref}[1]{\mbox{Table~\ref{#1}}}
+\newcommand{\algref}[1]{\mbox{Algorithm~\ref{#1}}}
+\newcommand{\lineref}[1]{\mbox{line~\ref{#1}}}
+
+
+
+%% -- VLSI specific macros (needs packages textcomp & xspace)
+\newcommand{\tclk}{\ensuremath{t_\mathrm{clk}}}
+\newcommand{\fclk}{\ensuremath{f_\mathrm{clk}}}
+\newcommand{\ns}{\ensuremath{\,}ns\xspace}
+\newcommand{\us}{\ensuremath{\,}{\textmu}s\xspace}
+\newcommand{\ms}{\ensuremath{\,}ms\xspace}
+\newcommand{\nm}{\ensuremath{\,}nm\xspace}
+\newcommand{\um}{\ensuremath{\,}{\textmu}m\xspace}
+\newcommand{\mm}{\ensuremath{\,}mm\xspace}
+\newcommand{\cm}{\ensuremath{\,}cm\xspace}
+\newcommand{\nJ}{\ensuremath{\,}nJ\xspace}
+\newcommand{\mJ}{\ensuremath{\,}mJ\xspace}
+\newcommand{\B}{\ensuremath{\,}B\xspace}
+\newcommand{\kB}{\ensuremath{\,}kB\xspace}
+\newcommand{\MB}{\ensuremath{\,}MB\xspace}
+\newcommand{\squm}{\ensuremath{\,}{\textmu}m$^2$\xspace}
+\newcommand{\sqmm}{\ensuremath{\,}mm$^2$\xspace}
+\newcommand{\sqcm}{\ensuremath{\,}cm$^2$\xspace}
+\newcommand{\sqm}{\ensuremath{\,}m$^2$\xspace}
+\newcommand{\V}{\ensuremath{\,}V\xspace}
+\newcommand{\mV}{\ensuremath{\,}mV\xspace}
+\newcommand{\A}{\ensuremath{\,}A\xspace}
+\newcommand{\mA}{\ensuremath{\,}mA\xspace}
+\newcommand{\W}{\ensuremath{\,}W\xspace}
+\newcommand{\uW}{\ensuremath{\,}{\textmu}W\xspace}
+\newcommand{\mW}{\ensuremath{\,}mW\xspace}
+\newcommand{\dB}{\ensuremath{\,}dB\xspace}
+\newcommand{\dBm}{\ensuremath{\,}dBm\xspace}
+\newcommand{\kGE}{\ensuremath{\,}kGE\xspace}
+\newcommand{\MGE}{\ensuremath{\,}MGE\xspace}
+\newcommand{\Hz}{\ensuremath{\,}Hz\xspace}
+\newcommand{\kHz}{\ensuremath{\,}kHz\xspace}
+\newcommand{\MHz}{\ensuremath{\,}MHz\xspace}
+\newcommand{\pj}{\ensuremath{\,}pJ\xspace}
+\newcommand{\pjop}{\ensuremath{\,}pJ/op\xspace}
+\newcommand{\OPS}{\ensuremath{\,}Op/s\xspace}
+\newcommand{\kOPS}{\ensuremath{\,}kOp/s\xspace}
+\newcommand{\MOPS}{\ensuremath{\,}MOp/s\xspace}
+\newcommand{\GOPS}{\ensuremath{\,}GOp/s\xspace}
+\newcommand{\Mbps}{\ensuremath{\,}Mbps\xspace}
+\newcommand{\Gbps}{\ensuremath{\,}Gbps\xspace}
+\newcommand{\GSps}{\ensuremath{\,}GS/s\xspace}
+
+
+\definecolor{lightblue}{rgb}{0.0, 0.4, 0.8}
+\definecolor{lightgreen}{rgb}{0.0, 0.5, 0.0}
+\newcommand{\red}[1]{\textcolor{red}{\textbf{#1}}}
+\newcommand{\blue}[1]{{\textcolor{lightblue}{#1}}}
+\newcommand{\green}[1]{{\textcolor{lightgreen}{#1}}}
