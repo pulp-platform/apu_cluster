@@ -20,9 +20,8 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-import riscv_defines_apu::*;
-
 module int_mult
+  import riscv_defines_apu::*;
 (
   input  logic [ 2:0] operator_i,
  
