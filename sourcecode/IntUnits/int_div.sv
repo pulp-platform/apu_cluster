@@ -24,10 +24,10 @@
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-import riscv_defines_apu::*;
 import apu_cluster_package::*;
 
-module int_div 
+module int_div
+  import riscv_defines_apu::*;
 #(
   parameter TAG_WIDTH = 0,
   parameter STAT_WIDTH = NUSFLAGS_INT_DIV
