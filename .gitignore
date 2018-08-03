@@ -1,0 +1,15 @@
+cockpit.log
+.llamaconfig
+tmp
+calibre
+dfii
+docs
+.svn_setup*
+.gen_gitignore*
+*.20[0-9]*-[0-9]*-[0-9]*-[0-9]*:[0-9]*:[0-9]*
+*~
+encounter
+synopsys
+modelsim
+.cockpitrc
+tetramax

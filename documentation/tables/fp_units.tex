@@ -1,0 +1,36 @@
+\begin{table}[t]\footnotesize
+\begin{threeparttable}
+% increase table row spacing, adjust to taste
+\caption{Area-delay trade-off of different Synopsys DW FP-operators with a 2.8ns clock period and 0.5ns input/output delay. (UMC 65nm, 1.08V, worst-case conditions)}
+\label{tab_apu:fp_units}
+\centering
+\begin{tabularx}{\textwidth}{@{}lp{0.5cm}|x{1.4cm}x{1.3cm}x{0.7cm}x{1.3cm}@{}}
+\toprule
+\multicolumn{2}{@{}l|}{\multirow{2}*{FP-Operator}}               & \textbf{Pipeline}           & \textbf{Latency}          & \multicolumn{2}{c}{\textbf{Area [kGE]$^a$}} \\
+                                           &                     & \textbf{registers}          & \textbf{[Cycles]}         & DW   & FPU\\  
+\midrule
+ADD/SUB                                    & hw                  & 1                           & 2                         & 3.4  & \multirow{3}*{9.6} \\
+MULT                                       & hw                  & 1                           & 2                         & 7.3  &                    \\
+I2F, F2I                                   & hw                  & 1                           & 2                         & 2.7  &                    \\
+\midrule
+\multirow{2}*{FMA}                         & \multirow{2}*{hw}   & 1                           & 2                         & 18.2 & \multirow{2}*{-}   \\
+                                           &                     & 2                           & 3                         & 13.4 &                    \\
+\midrule
+\multirow{4}*{DIV}                         & \multirow{2}*{hw}   & 3                           & 4                         & 18.9 & \multirow{2}*{-}   \\
+                                           &                     & 4                           & 5                         & 19.5 &                    \\
+                                           & hw               & -                           & 8$^b$                         & -    &  7.0$^c$          \\
+                                           & sw                  & -                           & ~65                       & -    & -                  \\
+\midrule
+\multirow{5}*{SQRT}                        & \multirow{3}*{hw}   & 3                           & 4                         & 14.0 & \multirow{3}*{-}   \\
+                                           &                     & 4                           & 5                         & 10.2 &                    \\
+                                           &                     & 5                           & 6                         & 9.6  &                    \\
+                                           & hw               & -                           & 8$^b$                         & -    &  7.0$^c$           \\
+                                           & sw                  & -                           & 50                        & -    & -                  \\
+%
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}\scriptsize
+\item[$^a$] 1 GE = 1.44\,\textmu m$^2$, $^b$ iterative, blocking unit, $^c$ Uses the same hardware for DIV and SQRT
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
