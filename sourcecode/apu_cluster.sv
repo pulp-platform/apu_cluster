@@ -877,6 +877,7 @@ module apu_cluster
             .apus(fpnew_ifs)
             );
 
+       generate
          // FPnew instances
          for (genvar i = 0; i < NAPUS_FPNEW; i++) begin : inst_fpnew
 
@@ -1026,8 +1027,8 @@ module apu_cluster
 
          end // shared divsqrt
       end // shared fpnew
+	  
 
-
-  // endgenerate
+   endgenerate
 
 endmodule
