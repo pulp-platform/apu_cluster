@@ -23,6 +23,7 @@
 
 import apu_cluster_package::*;
 
+
 module apu_cluster
   #(
     parameter C_NB_CORES         = 4,
@@ -61,7 +62,7 @@ module apu_cluster
    localparam integer NAPUS_DIVSQRT  = (PRIVATE_FP_DIVSQRT) ? C_NB_CORES : 1; // PRIVATE_FPNEW
 
 
-   // careful when modifying the following parameters. C_APUTYPES has to match with what is defined in apu_package.sv, and the individual types have to match what is defined in the core (riscv_decoder.sv)
+  // careful when modifying the following parameters. C_APUTYPES has to match with what is defined in apu_package.sv, and the individual types have to match what is defined in the core (riscv_decoder.sv)
    localparam APUTYPE_DSP_MULT   = (SHARED_DSP_MULT)       ? 0 : 0;
    localparam APUTYPE_INT_MULT   = (SHARED_INT_MULT)       ? SHARED_DSP_MULT : 0;
    localparam APUTYPE_INT_DIV    = (SHARED_INT_DIV)        ? SHARED_DSP_MULT + SHARED_INT_MULT : 0;
@@ -87,8 +88,8 @@ module apu_cluster
      #(
        .WOP_CPU(WOP_CPU),
        .WAPUTYPE(WAPUTYPE),
-			 .NUSFLAGS_CPU(NUSFLAGS_CPU),
-			 .NDSFLAGS_CPU(NDSFLAGS_CPU),
+       .NUSFLAGS_CPU(NUSFLAGS_CPU),
+       .NDSFLAGS_CPU(NDSFLAGS_CPU),
        .NARGS_CPU(NARGS_CPU)
        )
    marx_ifs [C_APUTYPES-1:0][C_NB_CORES-1:0] ();
@@ -189,6 +190,7 @@ module apu_cluster
    // --------------------------------------------------------------
    // DSP-mult, DSP-alu
    /////////////////////////////////////////////////////////////////
+/* -----\/----- EXCLUDED -----\/-----
 
    // DSP_MULT
    marx_apu_if
@@ -255,12 +257,14 @@ module apu_cluster
         end
       end
    endgenerate
+ -----/\----- EXCLUDED -----/\----- */
 
    /////////////////////////////////////////////////////////////////
    // INT - Units
    // --------------------------------------------------------------
    // INT-mult, INT-Div, INT-alu (future)
    /////////////////////////////////////////////////////////////////
+/* -----\/----- EXCLUDED -----\/-----
 
    // INT_MULT
    marx_apu_if
@@ -388,6 +392,7 @@ module apu_cluster
         end
       end
    endgenerate
+ -----/\----- EXCLUDED -----/\----- */
 
    /////////////////////////////////////////////////////////////////
    // FP - Units
@@ -395,6 +400,7 @@ module apu_cluster
    // FP-Addsub, FP-mul, FP-mac, FP-cast, FP-div, FP-sqrt
    /////////////////////////////////////////////////////////////////
 
+/* -----\/----- EXCLUDED -----\/-----
    // FP_SQRT
    marx_apu_if
      #(
@@ -460,6 +466,7 @@ module apu_cluster
        .WAPUTAG(WAPUTAG)
        )
    mac_ifs [NAPUS_MAC-1:0] ();
+ -----/\----- EXCLUDED -----/\----- */
 
    // FPnew
    marx_apu_if
@@ -483,6 +490,8 @@ module apu_cluster
        )
    divsqrt_ifs [NAPUS_DIVSQRT-1:0] ();
 
+
+/* -----\/----- EXCLUDED -----\/-----
 
 
    generate
@@ -826,10 +835,25 @@ module apu_cluster
                  .Ready_o          ( cast_ifs[i].ready_ds_s       )
                  );
            end
-      end
+      end // block: shared_fpu
+ -----/\----- EXCLUDED -----/\----- */
 
+
+      
+   /////////////////////////////////////////////////////////////////
+   // FPNEW
+   // --------------------------------------------------------------
+   // 
+   /////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+   
       // FPNEW
-      else if (SHARED_FP==2) begin : shared_fpnew
+      //else if (SHARED_FP==2) begin : shared_fpnew
 
          // Bulk FPNEW
          marx
@@ -998,12 +1022,12 @@ module apu_cluster
                   .OutValid_SO    ( divsqrt_ifs[i].req_us_s         ),
                   .OutReady_SI    ( divsqrt_ifs[i].ack_us_s         )
                );
-            end
+            //end
 
          end // shared divsqrt
       end // shared fpnew
 
 
-   endgenerate
+  // endgenerate
 
 endmodule
