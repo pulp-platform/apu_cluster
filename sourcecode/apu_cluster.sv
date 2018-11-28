@@ -266,7 +266,8 @@ module apu_cluster
 
             fpnew_top #(
                .WIDTH                ( FP_WIDTH      ),
-               .TAG_WIDTH            ( WAPUTAG       ),
+               .TAG_WIDTH            ( 1             ),
+	      // .TAG_WIDTH            ( WAPUTAG       ),
                .RV64                 ( 1'b0          ), // this is an RV32 core
                .RVF                  ( C_RVF         ),
                .RVD                  ( C_RVD         ),
@@ -296,19 +297,22 @@ module apu_cluster
                .FpFmt_SI       ( fpu_fmt                       ),
                .FpFmt2_SI      ( fpu_fmt2                      ),
                .IntFmt_SI      ( fpu_ifmt                      ),
-               .Tag_DI         ( fpnew_ifs[i].tag_ds_d         ),
+               .Tag_DI         (1'b0                           ),
+	       //.Tag_DI         ( fpnew_ifs[i].tag_ds_d         ),
                .InValid_SI     ( fpnew_ifs[i].valid_ds_s       ),
                .InReady_SO     ( fpnew_ifs[i].ready_ds_s       ),
                .Flush_SI       ( 1'b0                          ),
                .Z_DO           ( fpnew_ifs[i].result_us_d      ),
                .Status_DO      ( fpnew_ifs[i].flags_us_d       ),
-               .Tag_DO         ( fpnew_ifs[i].tag_us_d         ),
+               .Tag_DO         (                               ),
+//	       .Tag_DO         ( fpnew_ifs[i].tag_us_d         ),
                .OutValid_SO    ( fpnew_ifs[i].req_us_s         ),
                .OutReady_SI    ( fpnew_ifs[i].ack_us_s         )
             );
 
          end
 
+/* -----\/----- EXCLUDED -----\/-----
          // Shared FPnew divsqrt
          if (SHARED_FP_DIVSQRT==2) begin : shared_fp_divsqrt
             marx
@@ -396,6 +400,7 @@ module apu_cluster
 
          end // shared divsqrt
       end // shared fpnew
+ -----/\----- EXCLUDED -----/\----- */
 	  
 
    endgenerate
