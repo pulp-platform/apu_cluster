@@ -312,7 +312,7 @@ module apu_cluster
 
          end
 
-/* -----\/----- EXCLUDED -----\/-----
+
          // Shared FPnew divsqrt
          if (SHARED_FP_DIVSQRT==2) begin : shared_fp_divsqrt
             marx
@@ -400,7 +400,7 @@ module apu_cluster
 
          end // shared divsqrt
       end // shared fpnew
- -----/\----- EXCLUDED -----/\----- */
+
 	  
 
    endgenerate

@@ -29,7 +29,7 @@ package apu_cluster_package;
    parameter PRIVATE_FP_CAST   = 0;
    parameter PRIVATE_FP_DIV    = 0;    // this is also used for 'old' shared divsqrt
    parameter PRIVATE_FP_SQRT   = 0;
-   parameter PRIVATE_FPNEW     = 1;    // don't share fpnew by default
+   parameter PRIVATE_FPNEW     = 0;    // don't share fpnew by default
    parameter PRIVATE_FP_DIVSQRT= 0;    // use this for shared FPnew divsqrt
 
 
